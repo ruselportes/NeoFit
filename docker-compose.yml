@@ -1,0 +1,13 @@
+services:
+  neofit-dashboard:
+    build: .
+    container_name: neofit-dashboard
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      # Ensures hot-reloading works properly if running via WSL/Windows
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
