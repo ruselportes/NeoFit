@@ -1,13 +1,15 @@
 # Neofit Fitness Gym - Admin Dashboard 🏋️‍♂️
 
-A premium, modern administration dashboard built for **Neofit Fitness Gym**. This full-stack application is designed to help gym owners and staff easily manage members, track attendance, and handle gym operations in a sleek, dark-themed interface.
+A premium, modern administration dashboard built for **Neofit Fitness Gym**. This full-stack application is designed to help gym owners and staff easily manage members, track attendance, and handle gym operations in a sleek, customizable interface with support for both dark and light modes.
 
 ## 🚀 Features
 
 *   **Analytics Dashboard**: Get a high-level overview of active members, daily check-ins, and revenue.
-*   **Member Management**: View, add, and manage member profiles and subscription statuses (Active, Expiring Soon, Expired).
+*   **Member Management**: View, add, and manage member profiles and subscription statuses with support for specific gym rates.
 *   **Attendance Tracking**: Monitor live check-ins. Designed to integrate with biometric fingerprint scanners or manual ID entry.
+*   **Gym Rates**: A dedicated view to check current pricing for memberships and walk-ins based on categories.
 *   **Gym Settings**: Manage public announcements and update gym contact information.
+*   **Theme Toggle**: Easily switch between **Dark Mode** and **Light Mode** at the click of a button!
 
 ## 💻 Tech Stack
 
