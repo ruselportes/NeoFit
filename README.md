@@ -1,6 +1,6 @@
 # Neofit Fitness Gym - Admin Dashboard 🏋️‍♂️
 
-A premium, modern administration dashboard built for **Neofit Fitness Gym**. This web application is designed to help gym owners and staff easily manage members, track attendance, and handle gym operations in a sleek, dark-themed interface.
+A premium, modern administration dashboard built for **Neofit Fitness Gym**. This full-stack application is designed to help gym owners and staff easily manage members, track attendance, and handle gym operations in a sleek, dark-themed interface.
 
 ## 🚀 Features
 
@@ -12,47 +12,46 @@ A premium, modern administration dashboard built for **Neofit Fitness Gym**. Thi
 ## 💻 Tech Stack
 
 *   **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + TypeScript
+*   **Backend**: [Laravel](https://laravel.com/) (PHP)
+*   **Database**: MySQL
+*   **Containerization**: Docker + Docker Compose
 *   **Styling**: Pure Vanilla CSS featuring a custom premium design system (Glassmorphism, CSS Variables, smooth micro-animations).
 *   **Typography**: [Outfit](https://fonts.google.com/specimen/Outfit) via Google Fonts.
 
 ## 🛠️ Getting Started
 
-Follow these steps to run the dashboard locally on your machine.
+The easiest way to run the entire stack (Frontend, Backend, and Database) is using Docker.
 
 ### Prerequisites
-*   [Node.js](https://nodejs.org/) installed on your machine.
+*   [Docker](https://www.docker.com/) and Docker Compose installed on your machine.
 
-### Installation
+### Running with Docker
 
 1. **Navigate to the project directory:**
    ```bash
    cd neofit-admin
    ```
 
-2. **Install dependencies:**
+2. **Build and start the containers:**
    ```bash
-   npm install
+   docker compose up -d --build
    ```
+   This command will:
+   *   Build and start the React frontend on `http://localhost:5173`.
+   *   Build and start the Laravel API on `http://localhost:8000`.
+   *   Start the MySQL database.
 
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+3. **Access the Applications:**
+   *   **Frontend**: `http://localhost:5173`
+   *   **API**: `http://localhost:8000`
 
-4. **View the App:** Open your browser and navigate to `http://localhost:5173/`.
-
-### Running with Docker
-
-If you prefer to run the application using Docker, ensure Docker and Docker Compose are installed on your system.
-
-1. **Build and start the container:**
-   ```bash
-   docker compose up --build
-   ```
-
-2. **View the App:** Open your browser and navigate to `http://localhost:5173/`.
-   
-*Note: The Docker setup is configured for development with volume mounting. Any code changes you make locally will automatically hot-reload in the container!*
+### Database Access
+The MySQL database is exposed on port `3307` on your host machine to avoid conflicts with any local MySQL installations.
+*   **Host**: `localhost`
+*   **Port**: `3307`
+*   **Database**: `neofit`
+*   **Username**: `neofit`
+*   **Password**: `neofit`
 
 ## 🔌 Proposed Hardware Integration (Biometrics)
 
