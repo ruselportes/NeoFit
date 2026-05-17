@@ -1,5 +1,6 @@
 services:
-  neofit-dashboard:
+  # React Frontend
+  dashboard:
     build: .
     container_name: neofit-dashboard
     ports:
@@ -8,6 +9,39 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      # Ensures hot-reloading works properly if running via WSL/Windows
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+    depends_on:
+      - api
+
+  # Laravel API
+  api:
+    build: ./backend
+    container_name: neofit-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: neofit-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: neofit
+      MYSQL_USER: neofit
+      MYSQL_PASSWORD: neofit
+    ports:
+      - "3307:3306"
+    volumes:
+      - neofit_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  neofit_db_data:
