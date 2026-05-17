@@ -2,10 +2,20 @@ import { useState, useEffect } from 'react';
 import * as api from '../api';
 import type { CheckIn } from '../types';
 
-export default function AttendanceView() {
-  const [memberId, setMemberId] = useState('');
+export default function AttendanceView({ showNotification }: { showNotification: (message: string, type?: 'success' | 'error') => void }) {
+  const [memberId, setMemberId] = useState('M-');
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [feedback, setFeedback] = useState<{ type: string; msg: string } | null>(null);
+
+  const handleMemberIdChange = (value: string) => {
+    // Always keep the M- prefix
+    if (!value.startsWith('M-')) {
+      setMemberId('M-');
+      return;
+    }
+    const afterPrefix = value.slice(2).replace(/\D/g, ''); // digits only after M-
+    setMemberId('M-' + afterPrefix.slice(0, 3)); // max 3 digits (M-001 to M-999)
+  };
 
   const loadCheckIns = () => {
     api.fetchCheckIns()
@@ -22,13 +32,11 @@ export default function AttendanceView() {
     if (!memberId.trim()) return;
     try {
       const result = await api.createCheckIn(memberId.trim());
-      setFeedback({ type: 'success', msg: `✅ ${result.memberName} checked in successfully!` });
-      setMemberId('');
+      showNotification(`${result.memberName} checked in successfully!`);
+      setMemberId('M-');
       loadCheckIns();
-      setTimeout(() => setFeedback(null), 4000);
     } catch (e: any) {
-      setFeedback({ type: 'error', msg: e.message || 'Failed to check in.' });
-      setTimeout(() => setFeedback(null), 4000);
+      showNotification(e.message || 'Failed to check in.', 'error');
     }
   };
 
@@ -55,16 +63,15 @@ export default function AttendanceView() {
         <div style={{ flex: 1, height: '1px', background: 'var(--glass-border)' }}></div>
       </div>
 
-      {feedback && (
-        <div className={`toast ${feedback.type}`}>{feedback.msg}</div>
-      )}
+
 
       <div className="search-bar" style={{ justifyContent: 'center' }}>
         <input
-          type="text" className="input-field" placeholder="Enter Member ID (e.g. M-001)"
-          value={memberId} onChange={e => setMemberId(e.target.value)}
+          type="text" className="input-field" placeholder="M-001"
+          value={memberId} onChange={e => handleMemberIdChange(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleCheckIn()}
           style={{ maxWidth: '300px' }}
+          maxLength={5}
         />
         <button className="btn-primary" onClick={handleCheckIn}>Check In</button>
       </div>

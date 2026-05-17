@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './index.css';
 
 // Import Views
@@ -15,6 +15,12 @@ function App() {
   const [theme, setTheme] = useState('dark');
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [role, setRole] = useState<string | null>(localStorage.getItem('role'));
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   const handleLogin = (newToken: string, newRole: string) => {
     localStorage.setItem('token', newToken);
@@ -40,12 +46,12 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard': return <DashboardView onNavigate={setActiveTab} role={role} />;
-      case 'members': return <MembersView role={role} />;
-      case 'attendance': return <AttendanceView />;
+      case 'members': return <MembersView role={role} showNotification={showNotification} />;
+      case 'attendance': return <AttendanceView showNotification={showNotification} />;
       case 'rates': return <RatesView />;
       case 'settings': 
-        return role === 'admin' ? <SettingsView /> : <DashboardView onNavigate={setActiveTab} />;
-      default: return <DashboardView onNavigate={setActiveTab} />;
+        return role === 'admin' ? <SettingsView showNotification={showNotification} /> : <DashboardView onNavigate={setActiveTab} role={role} />;
+      default: return <DashboardView onNavigate={setActiveTab} role={role} />;
     }
   };
 
@@ -108,6 +114,26 @@ function App() {
         </div>
       </aside>
       <main className="main-content">{renderContent()}</main>
+      
+      {notification && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: notification.type === 'success' ? '#4caf50' : '#f44336',
+          color: 'white',
+          padding: '1rem 1.5rem',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          zIndex: 10000,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          {notification.type === 'success' ? '✅' : '❌'}
+          {notification.message}
+        </div>
+      )}
     </div>
   );
 }
