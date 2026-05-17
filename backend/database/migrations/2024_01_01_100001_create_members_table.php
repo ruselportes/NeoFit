@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('contact', 20);
-            $table->enum('plan', ['Daily Pass', 'Monthly', 'Annual']);
+            $table->string('plan');
             $table->date('joined_date');
             $table->date('expiry_date');
             $table->timestamps();

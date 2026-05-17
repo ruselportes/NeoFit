@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './index.css';
 
 // Import Views
@@ -7,16 +7,28 @@ import MembersView from './views/MembersView';
 import AttendanceView from './views/AttendanceView';
 import SettingsView from './views/SettingsView';
 import RatesView from './views/RatesView';
+import LoginView from './views/LoginView';
 
 // --- Main App ---
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [theme, setTheme] = useState('dark');
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+
+  const handleLogin = (newToken: string) => {
+    localStorage.setItem('token', newToken);
+    setToken(newToken);
+  };
 
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
     document.body.className = newTheme === 'light' ? 'light-mode' : '';
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
   };
 
   const renderContent = () => {
@@ -29,6 +41,10 @@ function App() {
       default: return <DashboardView onNavigate={setActiveTab} />;
     }
   };
+
+  if (!token) {
+    return <LoginView onLogin={handleLogin} />;
+  }
 
   return (
     <div className="app-container">
@@ -49,20 +65,36 @@ function App() {
           ))}
         </ul>
         
-        <button 
-          className="btn-secondary" 
-          onClick={toggleTheme} 
-          style={{
-            marginTop: 'auto', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            gap: '8px',
-            padding: '0.75rem'
-          }}
-        >
-          {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
-        </button>
+        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <button 
+            className="btn-secondary" 
+            onClick={toggleTheme} 
+            style={{
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              gap: '8px',
+              padding: '0.75rem'
+            }}
+          >
+            {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+          
+          <button 
+            className="btn-secondary" 
+            onClick={handleLogout} 
+            style={{
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              gap: '8px',
+              padding: '0.75rem',
+              color: 'var(--danger)'
+            }}
+          >
+            🚪 Logout
+          </button>
+        </div>
       </aside>
       <main className="main-content">{renderContent()}</main>
     </div>

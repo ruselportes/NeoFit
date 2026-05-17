@@ -11,6 +11,10 @@ WORKDIR /var/www/laravel
 # Create fresh Laravel project
 RUN composer create-project laravel/laravel . --prefer-dist --no-interaction
 
+# Install Sanctum for API auth
+RUN composer require laravel/sanctum --no-interaction
+RUN php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider" || true
+
 # Copy custom application files (merges with existing Laravel scaffolding)
 COPY bootstrap/app.php bootstrap/app.php
 COPY config/cors.php config/cors.php
@@ -19,6 +23,7 @@ COPY app/Models/ app/Models/
 COPY app/Http/Controllers/MemberController.php app/Http/Controllers/MemberController.php
 COPY app/Http/Controllers/CheckInController.php app/Http/Controllers/CheckInController.php
 COPY app/Http/Controllers/SettingsController.php app/Http/Controllers/SettingsController.php
+COPY app/Http/Controllers/AuthController.php app/Http/Controllers/AuthController.php
 COPY database/migrations/ database/migrations/
 COPY database/seeders/DatabaseSeeder.php database/seeders/DatabaseSeeder.php
 COPY .env.docker .env

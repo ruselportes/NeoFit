@@ -10,6 +10,15 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Seed user (only if empty)
+        if (\App\Models\User::count() === 0) {
+            \App\Models\User::create([
+                'name' => 'Admin',
+                'email' => 'admin@neofit.com',
+                'password' => bcrypt('password'),
+            ]);
+        }
+
         // Seed members (only if empty)
         if (Member::count() === 0) {
             Member::insert([

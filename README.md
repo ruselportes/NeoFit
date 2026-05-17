@@ -4,6 +4,7 @@ A premium, modern administration dashboard built for **Neofit Fitness Gym**. Thi
 
 ## 🚀 Features
 
+*   **Secure Admin Login**: Protected routes using Laravel Sanctum with token-based authentication and a show/hide password toggle.
 *   **Analytics Dashboard**: Get a high-level overview of active members, daily check-ins, and revenue.
 *   **Member Management**: View, add, and manage member profiles and subscription statuses with support for specific gym rates.
 *   **Attendance Tracking**: Monitor live check-ins. Designed to integrate with biometric fingerprint scanners or manual ID entry.
@@ -14,7 +15,7 @@ A premium, modern administration dashboard built for **Neofit Fitness Gym**. Thi
 ## 💻 Tech Stack
 
 *   **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + TypeScript
-*   **Backend**: [Laravel](https://laravel.com/) (PHP)
+*   **Backend**: [Laravel](https://laravel.com/) (PHP) + Sanctum
 *   **Database**: MySQL
 *   **Reverse Proxy**: Nginx
 *   **Containerization**: Docker + Docker Compose
@@ -45,9 +46,18 @@ The easiest way to run the entire stack is using Docker.
    *   **neofit-api**: Laravel backend API.
    *   **neofit-db**: MySQL database.
 
-3. **Access the Application:**
+3. **Initialize the Database:**
+   Since we use an entrypoint script, migrations run automatically. However, to seed the database and create the admin user, run:
+   ```bash
+   docker compose exec api php artisan migrate:fresh --seed
+   ```
+   *(If the container is stopped due to initial setup errors, use `docker compose run --rm --entrypoint /bin/sh api -c "php artisan migrate:fresh --seed"` instead).*
+
+4. **Access the Application:**
    *   Open your browser and navigate to **`http://localhost:8080`**.
-   *   Nginx will automatically handle routing your frontend requests and API calls (to `/api`).
+   *   Log in with the default credentials:
+       *   **Email**: `admin@neofit.com`
+       *   **Password**: `password`
 
 ### Database Access
 The MySQL database is exposed on port `3307` on your host machine to avoid conflicts with any local MySQL installations.

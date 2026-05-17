@@ -1,17 +1,35 @@
 const API_BASE = '/api';
 
 async function request(url: string, options?: RequestInit) {
+  const token = localStorage.getItem('token');
+  const headers: Record<string, string> = { 
+    'Content-Type': 'application/json', 
+    'Accept': 'application/json' 
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
   const res = await fetch(`${API_BASE}${url}`, {
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    headers,
     ...options,
   });
+  
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new Error(body.error || body.message || `Request failed (${res.status})`);
   }
+  
   if (res.status === 204) return null;
   return res.json();
 }
+
+// Auth
+export const login = (email: string, password: string) => 
+  request('/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+
+export const logout = () => request('/logout', { method: 'POST' });
 
 // Dashboard
 export const fetchDashboard = () => request('/dashboard');
