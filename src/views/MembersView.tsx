@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as api from '../api';
 import type { Member } from '../types';
 
-export default function MembersView() {
+export default function MembersView({ role }: { role: string | null }) {
   const [members, setMembers] = useState<Member[]>([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Status');
@@ -102,7 +102,9 @@ export default function MembersView() {
                 <td><span className={`badge ${m.status.replace(' ','-').toLowerCase()}`}>{m.status}</span></td>
                 <td>
                   <button className="btn-text" onClick={() => openEdit(m)}>Edit</button>
-                  <button className="btn-text" style={{color:'var(--danger)',marginLeft:'0.5rem'}} onClick={() => handleDelete(m.id)}>Delete</button>
+                  {role === 'admin' && (
+                    <button className="btn-text" style={{color:'var(--danger)',marginLeft:'0.5rem'}} onClick={() => handleDelete(m.id)}>Delete</button>
+                  )}
                 </td>
               </tr>
             ))}

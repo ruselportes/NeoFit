@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import * as api from '../api';
 
-export default function LoginView({ onLogin }: { onLogin: (token: string) => void }) {
+export default function LoginView({ onLogin }: { onLogin: (token: string, role: string) => void }) {
   const [email, setEmail] = useState('admin@neofit.com');
   const [password, setPassword] = useState('password');
   const [showPassword, setShowPassword] = useState(false);
@@ -12,7 +12,7 @@ export default function LoginView({ onLogin }: { onLogin: (token: string) => voi
     setError('');
     try {
       const data = await api.login(email, password);
-      onLogin(data.access_token);
+      onLogin(data.access_token, data.role);
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Login failed. Please check your credentials.');
@@ -24,9 +24,11 @@ export default function LoginView({ onLogin }: { onLogin: (token: string) => voi
       <div className="stat-card" style={{ width: '100%', maxWidth: '400px', padding: '2rem' }}>
         <div className="brand" style={{ justifyContent: 'center', marginBottom: '2rem' }}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#ff5722" />
-            <path d="M2 17L12 22L22 17" stroke="#ff5722" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M2 12L12 17L22 12" stroke="#ff5722" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <rect x="6" y="11" width="12" height="2" fill="#ff5722" />
+            <rect x="3" y="7" width="3" height="10" rx="1" fill="#ff5722" />
+            <rect x="18" y="7" width="3" height="10" rx="1" fill="#ff5722" />
+            <rect x="1" y="9" width="2" height="6" rx="0.5" fill="#ff5722" opacity="0.7"/>
+            <rect x="21" y="9" width="2" height="6" rx="0.5" fill="#ff5722" opacity="0.7"/>
           </svg>
           <h1>NEO<span className="brand-accent">FIT</span></h1>
         </div>

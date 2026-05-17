@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as api from '../api';
 import type { DashboardStats } from '../types';
 
-export default function DashboardView({ onNavigate }: { onNavigate: (tab: string) => void }) {
+export default function DashboardView({ onNavigate, role }: { onNavigate: (tab: string) => void, role: string | null }) {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [error, setError] = useState<string>('');
 
@@ -21,7 +21,7 @@ export default function DashboardView({ onNavigate }: { onNavigate: (tab: string
       
       <header className="header">
         <div className="header-title">
-          <h2>Welcome Back, Admin</h2>
+          <h2>Welcome Back, {role === 'admin' ? 'Admin' : 'Staff'}</h2>
           <p>Here's what's happening at Neofit today.</p>
         </div>
         <div className="header-actions">

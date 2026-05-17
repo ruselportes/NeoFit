@@ -63,7 +63,7 @@ class MemberController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'contact' => 'required|string|max:20',
-            'plan' => 'required|in:Daily Pass,Monthly,Annual',
+            'plan' => 'required|string|max:255',
             'joined_date' => 'required|date',
             'expiry_date' => 'required|date|after_or_equal:joined_date',
         ]);
@@ -82,7 +82,7 @@ class MemberController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'contact' => 'sometimes|string|max:20',
-            'plan' => 'sometimes|in:Daily Pass,Monthly,Annual',
+            'plan' => 'sometimes|string|max:255',
             'joined_date' => 'sometimes|date',
             'expiry_date' => 'sometimes|date',
         ]);
@@ -91,8 +91,12 @@ class MemberController extends Controller
         return response()->json($member);
     }
 
-    public function destroy(Member $member)
+    public function destroy(Request $request, Member $member)
     {
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized. Admins only.'], 403);
+        }
+
         $member->delete();
         return response()->json(null, 204);
     }

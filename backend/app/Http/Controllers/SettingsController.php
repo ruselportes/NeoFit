@@ -19,6 +19,10 @@ class SettingsController extends Controller
 
     public function update(Request $request)
     {
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized. Admins only.'], 403);
+        }
+
         $validated = $request->validate([
             'gymName'      => 'sometimes|string|max:255',
             'contact'      => 'sometimes|string|max:50',
