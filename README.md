@@ -14,13 +14,14 @@ A premium, modern administration dashboard built for **Neofit Fitness Gym**. Thi
 *   **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + TypeScript
 *   **Backend**: [Laravel](https://laravel.com/) (PHP)
 *   **Database**: MySQL
+*   **Reverse Proxy**: Nginx
 *   **Containerization**: Docker + Docker Compose
 *   **Styling**: Pure Vanilla CSS featuring a custom premium design system (Glassmorphism, CSS Variables, smooth micro-animations).
 *   **Typography**: [Outfit](https://fonts.google.com/specimen/Outfit) via Google Fonts.
 
 ## 🛠️ Getting Started
 
-The easiest way to run the entire stack (Frontend, Backend, and Database) is using Docker.
+The easiest way to run the entire stack is using Docker.
 
 ### Prerequisites
 *   [Docker](https://www.docker.com/) and Docker Compose installed on your machine.
@@ -36,14 +37,15 @@ The easiest way to run the entire stack (Frontend, Backend, and Database) is usi
    ```bash
    docker compose up -d --build
    ```
-   This command will:
-   *   Build and start the React frontend on `http://localhost:5173`.
-   *   Build and start the Laravel API on `http://localhost:8000`.
-   *   Start the MySQL database.
+   This command will start 4 containers:
+   *   **neofit-nginx**: Reverse proxy listening on `http://localhost:8080`.
+   *   **neofit-dashboard**: React frontend development server.
+   *   **neofit-api**: Laravel backend API.
+   *   **neofit-db**: MySQL database.
 
-3. **Access the Applications:**
-   *   **Frontend**: `http://localhost:5173`
-   *   **API**: `http://localhost:8000`
+3. **Access the Application:**
+   *   Open your browser and navigate to **`http://localhost:8080`**.
+   *   Nginx will automatically handle routing your frontend requests and API calls (to `/api`).
 
 ### Database Access
 The MySQL database is exposed on port `3307` on your host machine to avoid conflicts with any local MySQL installations.

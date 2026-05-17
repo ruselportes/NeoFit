@@ -1,4 +1,16 @@
 services:
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: neofit-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - dashboard
+      - api
+
   # React Frontend
   dashboard:
     build: .
