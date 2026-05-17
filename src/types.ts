@@ -1,0 +1,38 @@
+export interface Member {
+  id: number;
+  member_id: string;
+  name: string;
+  contact: string;
+  plan: string;
+  status: string;
+  joined_date?: string;
+  expiry_date?: string;
+}
+
+export interface CheckIn {
+  id: number;
+  memberId: string;
+  memberName: string;
+  time: string;
+  status: string;
+}
+
+export interface DashboardStats {
+  activeMembers: number;
+  totalMembers: number;
+  todayCheckIns: number;
+  recentCheckIns: {
+    id: number;
+    memberName: string;
+    time: string;
+    plan: string;
+    status: string;
+  }[];
+}
+
+export interface GymSettings {
+  gymName: string;
+  contact: string;
+  address: string;
+  announcement: string;
+}

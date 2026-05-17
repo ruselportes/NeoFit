@@ -1,6 +1,7 @@
 :root {
   --bg-primary: #0a0a0c;
   --bg-secondary: rgba(255, 255, 255, 0.03);
+  --bg-modal: #1a1a1f;
   --glass-border: rgba(255, 255, 255, 0.08);
   --accent: #ff5722; /* Neon Orange */
   --accent-glow: rgba(255, 87, 34, 0.3);
@@ -10,6 +11,20 @@
   --danger: #ef4444;
   --card-radius: 16px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --input-bg: rgba(0, 0, 0, 0.2);
+  --th-bg: rgba(0, 0, 0, 0.2);
+}
+
+.light-mode {
+  --bg-primary: #f8fafc;
+  --bg-secondary: rgba(0, 0, 0, 0.03);
+  --bg-modal: #ffffff;
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --accent-glow: rgba(255, 87, 34, 0.15);
+  --input-bg: rgba(0, 0, 0, 0.05);
+  --th-bg: rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -243,7 +258,7 @@ th, td {
 }
 
 th {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--th-bg);
   color: var(--text-muted);
   font-weight: 500;
   font-size: 0.875rem;
@@ -277,7 +292,7 @@ tr:hover td {
 }
 
 .input-field {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--input-bg);
   border: 1px solid var(--glass-border);
   color: var(--text-main);
   padding: 0.75rem 1rem;
@@ -343,7 +358,7 @@ tr:hover td {
 }
 
 .modal-content {
-  background: #1a1a1f;
+  background: var(--bg-modal);
   border: 1px solid var(--glass-border);
   border-radius: var(--card-radius);
   padding: 2rem;
