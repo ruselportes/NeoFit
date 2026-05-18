@@ -52,7 +52,11 @@ class MemberController extends Controller
         $members = $query->orderBy('created_at', 'desc')->get();
 
         if ($request->filled('status') && $request->status !== 'All Status') {
-            $members = $members->filter(fn($m) => $m->status === $request->status)->values();
+            if ($request->status === 'Annual Membership') {
+                $members = $members->filter(fn($m) => str_contains($m->plan, 'Annual'))->values();
+            } else {
+                $members = $members->filter(fn($m) => $m->status === $request->status)->values();
+            }
         }
 
         return response()->json($members);
@@ -66,6 +70,8 @@ class MemberController extends Controller
             'plan' => 'required|string|max:255',
             'joined_date' => 'required|date',
             'expiry_date' => 'required|date|after_or_equal:joined_date',
+            'address' => 'nullable|string|max:500',
+            'membership_expiry' => 'nullable|date',
         ]);
 
         $member = Member::create($validated);
@@ -85,6 +91,8 @@ class MemberController extends Controller
             'plan' => 'sometimes|string|max:255',
             'joined_date' => 'sometimes|date',
             'expiry_date' => 'sometimes|date',
+            'address' => 'nullable|string|max:500',
+            'membership_expiry' => 'nullable|date',
         ]);
 
         $member->update($validated);

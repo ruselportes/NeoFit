@@ -29,12 +29,58 @@ class DatabaseSeeder extends Seeder
 
         // Seed members (only if empty)
         if (Member::count() === 0) {
+            $today = now();
             Member::insert([
-                ['name' => 'John Doe',     'contact' => '09123456789', 'plan' => 'Regular Monthly (No Treadmill)',    'joined_date' => '2026-01-15', 'expiry_date' => '2026-06-15', 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'Sarah Connor',  'contact' => '09987654321', 'plan' => 'Student/Senior Monthly (With Treadmill)',     'joined_date' => '2026-02-02', 'expiry_date' => '2027-02-02', 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'Mike Ross',     'contact' => '09112223344', 'plan' => 'Regular Daily', 'joined_date' => '2026-03-10', 'expiry_date' => '2026-03-10', 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'Jane Smith',    'contact' => '09887776655', 'plan' => 'Regular Monthly (With Treadmill)',    'joined_date' => '2026-04-05', 'expiry_date' => '2026-07-05', 'created_at' => now(), 'updated_at' => now()],
-                ['name' => 'Bruce Wayne',   'contact' => '09334445566', 'plan' => 'Regular Semi-Monthly',    'joined_date' => '2026-05-01', 'expiry_date' => '2026-05-25', 'created_at' => now(), 'updated_at' => now()],
+                [
+                    'name' => 'John Doe',
+                    'contact' => '09123456789',
+                    'address' => 'Tagum Sur, Trinidad, Bohol',
+                    'plan' => 'Regular Member - Monthly (No Treadmill)',
+                    'joined_date' => '2026-05-01',
+                    'expiry_date' => '2026-06-01',
+                    'membership_expiry' => '2027-05-01',
+                    'created_at' => $today, 'updated_at' => $today,
+                ],
+                [
+                    'name' => 'Sarah Connor',
+                    'contact' => '09987654321',
+                    'address' => 'Poblacion, Trinidad, Bohol',
+                    'plan' => 'Student/Senior Member - Monthly (With Treadmill)',
+                    'joined_date' => '2026-05-10',
+                    'expiry_date' => '2026-06-10',
+                    'membership_expiry' => '2027-05-10',
+                    'created_at' => $today, 'updated_at' => $today,
+                ],
+                [
+                    'name' => 'Mike Ross',
+                    'contact' => '09112223344',
+                    'address' => null,
+                    'plan' => 'Regular Non-Member - Daily (No Treadmill)',
+                    'joined_date' => '2026-05-18',
+                    'expiry_date' => '2026-05-19',
+                    'membership_expiry' => null,
+                    'created_at' => $today, 'updated_at' => $today,
+                ],
+                [
+                    'name' => 'Jane Smith',
+                    'contact' => '09887776655',
+                    'address' => 'San Isidro, Trinidad, Bohol',
+                    'plan' => 'Regular Member - Monthly (With Treadmill)',
+                    'joined_date' => '2026-04-18',
+                    'expiry_date' => '2026-05-18',
+                    'membership_expiry' => '2027-04-18',
+                    'created_at' => $today, 'updated_at' => $today,
+                ],
+                [
+                    'name' => 'Bruce Wayne',
+                    'contact' => '09334445566',
+                    'address' => 'Lundag, Trinidad, Bohol',
+                    'plan' => 'Regular Member - Semi-Monthly (No Treadmill)',
+                    'joined_date' => '2026-05-10',
+                    'expiry_date' => '2026-05-25',
+                    'membership_expiry' => '2027-05-10',
+                    'created_at' => $today, 'updated_at' => $today,
+                ],
             ]);
         }
 

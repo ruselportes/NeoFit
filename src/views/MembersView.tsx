@@ -8,7 +8,7 @@ export default function MembersView({ role, showNotification }: { role: string |
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [showModal, setShowModal] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
-  const [form, setForm] = useState({ name: '', contact: '', plan: 'Monthly', joined_date: '', expiry_date: '', address: '' });
+  const [form, setForm] = useState({ name: '', contact: '', plan: 'Monthly', joined_date: '', expiry_date: '', address: '', membership_expiry: '' });
   const [error, setError] = useState('');
 
   const loadMembers = useCallback(() => {
@@ -26,13 +26,20 @@ export default function MembersView({ role, showNotification }: { role: string |
   const calcExpiry = (plan: string, joinedDate: string): string => {
     if (!joinedDate) return '';
     const d = new Date(joinedDate);
-    if (plan.includes('Monthly') && !plan.includes('Semi')) {
-      d.setMonth(d.getMonth() + 1);
+    if (plan.includes('Daily')) {
+      d.setDate(d.getDate() + 1);
     } else if (plan.includes('Semi-Monthly')) {
       d.setDate(d.getDate() + 15);
-    } else if (plan.includes('Daily')) {
-      d.setDate(d.getDate() + 1);
+    } else if (plan.includes('Monthly')) {
+      d.setMonth(d.getMonth() + 1);
     }
+    return d.toISOString().split('T')[0];
+  };
+
+  const calcMembershipExpiry = (plan: string, joinedDate: string): string => {
+    if (!joinedDate || plan.includes('Non-Member')) return '';
+    const d = new Date(joinedDate);
+    d.setFullYear(d.getFullYear() + 1);
     return d.toISOString().split('T')[0];
   };
 
@@ -45,13 +52,27 @@ export default function MembersView({ role, showNotification }: { role: string |
     const diffTime = expiry.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
+  // Parse plan name into { category, period, type } matching the Rates tab
+  const parsePlan = (plan: string) => {
+    const isNonMember = plan.includes('Non-Member');
+    const isStudentSenior = plan.includes('Student/Senior');
+    const category = isStudentSenior
+      ? (isNonMember ? 'Student/Senior Non-Members' : 'Student/Senior Members')
+      : (isNonMember ? 'Regular Non-Members' : 'Regular Members');
+    const period = plan.includes('Daily') ? 'Daily'
+      : plan.includes('Semi-Monthly') ? 'Semi-Monthly'
+      : plan.includes('Monthly') ? 'Monthly' : '';
+    const type = plan.includes('With Treadmill') ? 'With Treadmill'
+      : plan.includes('No Treadmill') ? 'No Treadmill' : '';
+    return { category, period, type };
+  };
 
-  const defaultPlan = 'Regular Monthly (No Treadmill)';
+  const defaultPlan = 'Regular Member - Monthly (No Treadmill)';
 
   const openAdd = () => {
     setEditingMember(null);
     const today = new Date().toISOString().split('T')[0];
-    setForm({ name: '', contact: '09', plan: defaultPlan, joined_date: today, expiry_date: calcExpiry(defaultPlan, today), address: '' });
+    setForm({ name: '', contact: '09', plan: defaultPlan, joined_date: today, expiry_date: calcExpiry(defaultPlan, today), address: '', membership_expiry: calcMembershipExpiry(defaultPlan, today) });
     setError('');
     setShowModal(true);
   };
@@ -63,6 +84,7 @@ export default function MembersView({ role, showNotification }: { role: string |
       joined_date: m.joined_date?.split('T')[0] || '',
       expiry_date: m.expiry_date?.split('T')[0] || '',
       address: m.address || '',
+      membership_expiry: m.membership_expiry?.split('T')[0] || '',
     });
     setError('');
     setShowModal(true);
@@ -126,6 +148,7 @@ export default function MembersView({ role, showNotification }: { role: string |
           <option>Active</option>
           <option>Expiring Soon</option>
           <option>Expired</option>
+          <option>Annual Membership</option>
         </select>
       </div>
 
@@ -133,7 +156,7 @@ export default function MembersView({ role, showNotification }: { role: string |
 
       <div className="table-container">
         <table>
-          <thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Address</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Address</th><th>Plan</th><th>Membership</th><th>Plan Expiry</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             {members.map((m) => (
               <tr key={m.id}>
@@ -141,13 +164,38 @@ export default function MembersView({ role, showNotification }: { role: string |
                 <td><strong>{m.name}</strong></td>
                 <td>{m.contact}</td>
                 <td>{m.address || '-'}</td>
-                <td>{m.plan}</td>
                 <td>
-                  <span className={`badge ${m.status.replace(' ','-').toLowerCase()}`}>
-                    {m.status === 'Expiring Soon' ? (() => {
-                      const days = getRemainingDays(m.expiry_date);
-                      return `${days} day${days !== 1 ? 's' : ''} left`;
-                    })() : m.status}
+                  {(() => {
+                    const { category, period, type } = parsePlan(m.plan);
+                    return (
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{category}</div>
+                        {(period || type) && (
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                            {[period, type].filter(Boolean).join(' · ')}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </td>
+                <td>
+                  {!m.plan.includes('Non-Member') ? (() => {
+                    const days = getRemainingDays(m.membership_expiry || '');
+                    if (days <= 0) return <span style={{ color: 'var(--danger)', fontSize: '0.85rem', fontWeight: 600 }}>Expired</span>;
+                    return <span style={{ color: days <= 30 ? '#ff9800' : 'var(--success)', fontSize: '0.85rem', fontWeight: 600 }}>{days} day{days !== 1 ? 's' : ''} left</span>;
+                  })() : <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>—</span>}
+                </td>
+                <td>
+                  {(() => {
+                    const days = getRemainingDays(m.expiry_date || '');
+                    if (days <= 0) return <span style={{ color: 'var(--danger)', fontSize: '0.85rem', fontWeight: 600 }}>Expired</span>;
+                    return <span style={{ color: days <= 7 ? '#ff9800' : 'var(--success)', fontSize: '0.85rem', fontWeight: 600 }}>{days} day{days !== 1 ? 's' : ''} left</span>;
+                  })()}
+                </td>
+                <td>
+                  <span className={`badge ${m.status.replace(' ', '-').toLowerCase()}`}>
+                    {m.status}
                   </span>
                 </td>
                 <td>
@@ -160,6 +208,7 @@ export default function MembersView({ role, showNotification }: { role: string |
             ))}
           </tbody>
         </table>
+
       </div>
 
       {showModal && (
@@ -173,21 +222,46 @@ export default function MembersView({ role, showNotification }: { role: string |
             <div className="form-group"><label>Plan</label>
               <select className="input-field" value={form.plan} onChange={e => {
                 const newPlan = e.target.value;
-                setForm({ ...form, plan: newPlan, expiry_date: calcExpiry(newPlan, form.joined_date) });
+                setForm({ ...form, plan: newPlan, expiry_date: calcExpiry(newPlan, form.joined_date), membership_expiry: calcMembershipExpiry(newPlan, form.joined_date) });
               }}>
-                <option>Regular Monthly (No Treadmill)</option>
-                <option>Regular Monthly (With Treadmill)</option>
-                <option>Student/Senior Monthly (No Treadmill)</option>
-                <option>Student/Senior Monthly (With Treadmill)</option>
-                <option>Regular Semi-Monthly</option>
-                <option>Regular Daily</option>
+                <optgroup label="━━ Members (Annual Fee Paid) ━━">
+                  <option>Regular Member - Monthly (No Treadmill)</option>
+                  <option>Regular Member - Monthly (With Treadmill)</option>
+                  <option>Regular Member - Semi-Monthly (No Treadmill)</option>
+                  <option>Regular Member - Semi-Monthly (With Treadmill)</option>
+                  <option>Regular Member - Daily (No Treadmill)</option>
+                  <option>Regular Member - Daily (With Treadmill)</option>
+                  <option>Student/Senior Member - Monthly (No Treadmill)</option>
+                  <option>Student/Senior Member - Monthly (With Treadmill)</option>
+                  <option>Student/Senior Member - Semi-Monthly (No Treadmill)</option>
+                  <option>Student/Senior Member - Semi-Monthly (With Treadmill)</option>
+                  <option>Student/Senior Member - Daily (No Treadmill)</option>
+                  <option>Student/Senior Member - Daily (With Treadmill)</option>
+                </optgroup>
+                <optgroup label="━━ Non-Members ━━">
+                  <option>Regular Non-Member - Monthly (No Treadmill)</option>
+                  <option>Regular Non-Member - Monthly (With Treadmill)</option>
+                  <option>Regular Non-Member - Semi-Monthly (No Treadmill)</option>
+                  <option>Regular Non-Member - Semi-Monthly (With Treadmill)</option>
+                  <option>Regular Non-Member - Daily (No Treadmill)</option>
+                  <option>Regular Non-Member - Daily (With Treadmill)</option>
+                  <option>Student/Senior Non-Member - Monthly (No Treadmill)</option>
+                  <option>Student/Senior Non-Member - Monthly (With Treadmill)</option>
+                  <option>Student/Senior Non-Member - Semi-Monthly (No Treadmill)</option>
+                  <option>Student/Senior Non-Member - Semi-Monthly (With Treadmill)</option>
+                  <option>Student/Senior Non-Member - Daily (No Treadmill)</option>
+                  <option>Student/Senior Non-Member - Daily (With Treadmill)</option>
+                </optgroup>
               </select>
             </div>
             <div className="form-group"><label>Joined Date</label><input type="date" className="input-field" value={form.joined_date} onChange={e => {
               const newDate = e.target.value;
-              setForm({ ...form, joined_date: newDate, expiry_date: calcExpiry(form.plan, newDate) });
+              setForm({ ...form, joined_date: newDate, expiry_date: calcExpiry(form.plan, newDate), membership_expiry: calcMembershipExpiry(form.plan, newDate) });
             }} /></div>
-            <div className="form-group"><label>Expiry Date</label><input type="date" className="input-field" value={form.expiry_date} readOnly style={{ opacity: 0.7, cursor: 'not-allowed' }} /></div>
+            <div className="form-group"><label>Plan Expiry Date</label><input type="date" className="input-field" value={form.expiry_date} readOnly style={{ opacity: 0.7, cursor: 'not-allowed' }} /></div>
+            {!form.plan.includes('Non-Member') && (
+              <div className="form-group"><label>Annual Membership Expiry</label><input type="date" className="input-field" value={form.membership_expiry} readOnly style={{ opacity: 0.7, cursor: 'not-allowed' }} /></div>
+            )}
             <div className="modal-actions">
               <button className="btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
               <button className="btn-primary" onClick={handleSave}>{editingMember ? 'Update' : 'Add Member'}</button>

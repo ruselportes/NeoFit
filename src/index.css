@@ -283,6 +283,7 @@ tr:hover td {
 .badge.active { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
 .badge.expired { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 .badge.expiring-soon { background: rgba(255, 152, 0, 0.15); color: #ff9800; border: 1px solid rgba(255, 152, 0, 0.3); }
+.badge.annual-member { background: rgba(138, 43, 226, 0.15); color: #a855f7; border: 1px solid rgba(138, 43, 226, 0.35); }
 
 /* Forms & Inputs */
 .search-bar {
@@ -306,6 +307,30 @@ tr:hover td {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 2px rgba(255, 87, 34, 0.2);
+}
+
+select.input-field option {
+  background-color: #1a1a2e;
+  color: #f8fafc;
+}
+
+select.input-field optgroup {
+  background-color: #0f0f1a;
+  color: #94a3b8;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.light-mode select.input-field option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+.light-mode select.input-field optgroup {
+  background-color: #f1f5f9;
+  color: #475569;
 }
 
 .form-group {

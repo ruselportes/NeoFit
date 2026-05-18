@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('joined_date');
             $table->date('expiry_date');
             $table->string('address')->nullable();
+            $table->date('membership_expiry')->nullable();
             $table->timestamps();
         });
     }

@@ -8,6 +8,7 @@ export interface Member {
   joined_date?: string;
   expiry_date?: string;
   address?: string;
+  membership_expiry?: string;
 }
 
 export interface CheckIn {
