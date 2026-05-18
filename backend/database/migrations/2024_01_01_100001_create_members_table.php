@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('plan');
             $table->date('joined_date');
             $table->date('expiry_date');
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 class Member extends Model
 {
-    protected $fillable = ['name', 'contact', 'plan', 'joined_date', 'expiry_date'];
+    protected $fillable = ['name', 'contact', 'plan', 'joined_date', 'expiry_date', 'address'];
 
     protected $casts = [
         'joined_date' => 'date',

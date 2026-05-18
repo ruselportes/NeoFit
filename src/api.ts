@@ -39,7 +39,7 @@ export const fetchMembers = (search = '', status = '') =>
   request(`/members?search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`);
 
 export const createMember = (data: {
-  name: string; contact: string; plan: string; joined_date: string; expiry_date: string;
+  name: string; contact: string; plan: string; joined_date: string; expiry_date: string; address?: string;
 }) => request('/members', { method: 'POST', body: JSON.stringify(data) });
 
 export const updateMember = (id: number, data: Record<string, string>) =>

@@ -8,7 +8,7 @@ export default function MembersView({ role, showNotification }: { role: string |
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [showModal, setShowModal] = useState(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
-  const [form, setForm] = useState({ name: '', contact: '', plan: 'Monthly', joined_date: '', expiry_date: '' });
+  const [form, setForm] = useState({ name: '', contact: '', plan: 'Monthly', joined_date: '', expiry_date: '', address: '' });
   const [error, setError] = useState('');
 
   const loadMembers = useCallback(() => {
@@ -36,12 +36,22 @@ export default function MembersView({ role, showNotification }: { role: string |
     return d.toISOString().split('T')[0];
   };
 
+  const getRemainingDays = (expiryDate: string): number => {
+    if (!expiryDate) return 0;
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    today.setHours(0, 0, 0, 0);
+    expiry.setHours(0, 0, 0, 0);
+    const diffTime = expiry.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
   const defaultPlan = 'Regular Monthly (No Treadmill)';
 
   const openAdd = () => {
     setEditingMember(null);
     const today = new Date().toISOString().split('T')[0];
-    setForm({ name: '', contact: '09', plan: defaultPlan, joined_date: today, expiry_date: calcExpiry(defaultPlan, today) });
+    setForm({ name: '', contact: '09', plan: defaultPlan, joined_date: today, expiry_date: calcExpiry(defaultPlan, today), address: '' });
     setError('');
     setShowModal(true);
   };
@@ -52,6 +62,7 @@ export default function MembersView({ role, showNotification }: { role: string |
       name: m.name, contact: m.contact, plan: m.plan,
       joined_date: m.joined_date?.split('T')[0] || '',
       expiry_date: m.expiry_date?.split('T')[0] || '',
+      address: m.address || '',
     });
     setError('');
     setShowModal(true);
@@ -122,15 +133,23 @@ export default function MembersView({ role, showNotification }: { role: string |
 
       <div className="table-container">
         <table>
-          <thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Address</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody>
             {members.map((m) => (
               <tr key={m.id}>
                 <td>{m.member_id}</td>
                 <td><strong>{m.name}</strong></td>
                 <td>{m.contact}</td>
+                <td>{m.address || '-'}</td>
                 <td>{m.plan}</td>
-                <td><span className={`badge ${m.status.replace(' ','-').toLowerCase()}`}>{m.status}</span></td>
+                <td>
+                  <span className={`badge ${m.status.replace(' ','-').toLowerCase()}`}>
+                    {m.status === 'Expiring Soon' ? (() => {
+                      const days = getRemainingDays(m.expiry_date);
+                      return `${days} day${days !== 1 ? 's' : ''} left`;
+                    })() : m.status}
+                  </span>
+                </td>
                 <td>
                   <button className="btn-text" onClick={() => openEdit(m)}>Edit</button>
                   {role === 'admin' && (
@@ -150,6 +169,7 @@ export default function MembersView({ role, showNotification }: { role: string |
             {error && <p className="form-error">{error}</p>}
             <div className="form-group"><label>Full Name</label><input className="input-field" value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></div>
             <div className="form-group"><label>Contact</label><input type="tel" className="input-field" placeholder="09XXXXXXXXX" value={form.contact} onChange={e => handleContactChange(e.target.value)} maxLength={11} /></div>
+            <div className="form-group"><label>Address</label><input className="input-field" value={form.address} onChange={e => setForm({...form, address: e.target.value})} /></div>
             <div className="form-group"><label>Plan</label>
               <select className="input-field" value={form.plan} onChange={e => {
                 const newPlan = e.target.value;
