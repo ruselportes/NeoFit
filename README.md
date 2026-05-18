@@ -9,8 +9,9 @@ A premium, modern administration dashboard built for **Neofit Fitness Gym**. Thi
 *   **Member Management**: View, add, and manage member profiles and subscription statuses with support for specific gym rates.
 *   **Attendance Tracking**: Monitor live check-ins. Designed to integrate with biometric fingerprint scanners or manual ID entry.
 *   **Gym Rates**: A dedicated view to check current pricing for memberships and walk-ins based on categories.
-*   **Gym Settings**: Manage public announcements and update gym contact information.
+*   **Gym Settings**: Manage public announcements and update gym contact information (admin only).
 *   **Theme Toggle**: Easily switch between **Dark Mode** and **Light Mode** at the click of a button!
+*   **One-Click Launch**: Desktop shortcut with custom icon — just double-click to start the entire system.
 
 ## 💻 Tech Stack
 
@@ -22,7 +23,38 @@ A premium, modern administration dashboard built for **Neofit Fitness Gym**. Thi
 *   **Styling**: Pure Vanilla CSS featuring a custom premium design system (Glassmorphism, CSS Variables, smooth micro-animations).
 *   **Typography**: [Outfit](https://fonts.google.com/specimen/Outfit) via Google Fonts.
 
-## 🛠️ Getting Started
+## 📁 Project Structure
+
+```
+neofit-admin/
+├── backend/               # Laravel API (PHP)
+├── nginx/                 # Nginx reverse proxy config
+├── public/                # Static assets (favicon, icons)
+├── src/
+│   ├── assets/            # Images and SVGs
+│   ├── views/             # React view components
+│   │   ├── LoginView.tsx
+│   │   ├── DashboardView.tsx
+│   │   ├── MembersView.tsx
+│   │   ├── AttendanceView.tsx
+│   │   ├── RatesView.tsx
+│   │   └── SettingsView.tsx
+│   ├── App.tsx            # Main app with routing and sidebar
+│   ├── api.ts             # API request helpers
+│   ├── types.ts           # TypeScript type definitions
+│   ├── index.css          # Design system and global styles
+│   └── main.tsx           # React entry point
+├── docker-compose.yml     # Full-stack container orchestration
+├── Dockerfile             # Frontend container config
+├── START.bat              # One-click launcher (Windows)
+├── STOP.bat               # One-click shutdown (Windows)
+├── CREATE_SHORTCUT.ps1    # Desktop shortcut installer
+├── CLIENT_SETUP.md        # End-user setup guide
+├── neofit.ico             # Custom desktop shortcut icon
+└── README.md
+```
+
+## 🛠️ Getting Started (Developer)
 
 The easiest way to run the entire stack is using Docker.
 
@@ -59,7 +91,29 @@ The easiest way to run the entire stack is using Docker.
        *   **Email**: `admin@neofit.com`
        *   **Password**: `password`
 
-### Database Access
+## 🖥️ Client Deployment (Non-Technical Users)
+
+For deploying to the gym's front-desk PC, we provide a simple one-click workflow. See **[CLIENT_SETUP.md](CLIENT_SETUP.md)** for the full guide.
+
+### Quick Overview
+
+| File | Purpose |
+|------|---------|
+| `START.bat` | Launches Docker, builds containers, seeds the DB, and opens the browser — all in one double-click. |
+| `STOP.bat` | Shuts down all running NeoFit containers. |
+| `CREATE_SHORTCUT.ps1` | Creates a **"NeoFit Dashboard"** shortcut on the Desktop with a custom icon. |
+| `neofit.ico` | Custom NeoFit logo icon for the desktop shortcut. |
+| `CLIENT_SETUP.md` | Step-by-step setup guide written for non-technical users. |
+
+### Default Login Credentials
+
+| Role  | Email               | Password   |
+|-------|---------------------|------------|
+| Admin | admin@neofit.com    | password   |
+| Staff | staff@neofit.com    | password   |
+
+## 🗄️ Database Access
+
 The MySQL database is exposed on port `3307` on your host machine to avoid conflicts with any local MySQL installations.
 *   **Host**: `localhost`
 *   **Port**: `3307`
