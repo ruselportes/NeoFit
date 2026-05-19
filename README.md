@@ -4,12 +4,17 @@ A premium, modern administration dashboard built for **Neofit Fitness Gym**. Thi
 
 ## 🚀 Features
 
-*   **Secure Admin Login**: Protected routes using Laravel Sanctum with token-based authentication and a show/hide password toggle.
-*   **Analytics Dashboard**: Get a high-level overview of active members, daily check-ins, and revenue.
-*   **Member Management**: View, add, and manage member profiles and subscription statuses with support for specific gym rates.
-*   **Attendance Tracking**: Monitor live check-ins. Designed to integrate with biometric fingerprint scanners or manual ID entry.
+*   **Secure Admin Login**: Protected routes using Laravel Sanctum with token-based authentication, a show/hide password toggle, and brute-force prevention.
+*   **Brute-Force & DDoS Protection**: Configured API rate limiting (`throttle:5,1` on login to prevent brute force; `throttle:30,1` on authenticated endpoints to protect server resources).
+*   **Prevent Duplicate Registrations**: Backend validation blocks creating or editing a member to have the same name and contact combination as an existing member.
+*   **Strict Contact Number Validation**: Frontend and backend validate that contact numbers must be exactly 11 digits starting with `09`.
+*   **Dynamic Membership Lifecycle**: Automatic status evaluation (Active, Expiring Soon, Pending, Expired) using timezone-safe (`Asia/Manila`) comparisons. Countdowns display "Starts in X days" for future-dated members and "Expires Today" on the last day.
+*   **Smart Attendance Block**: Restricts attendance check-ins, rejecting time-ins for members with `Expired` or `Pending` status.
+*   **Analytics Dashboard**: High-level overview of active members, daily check-ins, and membership statistics.
+*   **Member Management & Mobile Optimization**: Complete CRUD with custom modal layouts optimized for mobile keyboards, preventing input fields from getting pushed off-screen.
+*   **Static Code Quality (Larastan)**: Configured static code analysis (`vendor/bin/phpstan`) inside the container to ensure zero-error builds.
 *   **Gym Rates**: A dedicated view to check current pricing for memberships and walk-ins based on categories.
-*   **Gym Settings**: Manage public announcements and update gym contact information (admin only).
+*   **Coming Soon Modules**: Fully designed placeholder templates for Gym Settings and Fingerprint Biometrics showing future development roadmaps.
 *   **Theme Toggle**: Easily switch between **Dark Mode** and **Light Mode** at the click of a button!
 *   **One-Click Launch**: Desktop shortcut with custom icon — just double-click to start the entire system.
 
@@ -90,6 +95,13 @@ The easiest way to run the entire stack is using Docker.
    *   Log in with the default credentials:
        *   **Email**: `admin@neofit.com`
        *   **Password**: `password`
+
+### 🔍 Running Static Code Analysis (Larastan)
+
+To check for code bugs, type mismatches, or syntax errors, run Larastan inside the container:
+```bash
+docker exec -it neofit-api ./vendor/bin/phpstan analyse --memory-limit=-1
+```
 
 ## 🖥️ Client Deployment (Non-Technical Users)
 
