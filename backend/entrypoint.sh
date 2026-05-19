@@ -19,4 +19,5 @@ php artisan migrate --force
 php artisan db:seed --force
 
 echo "Starting Laravel server on port ${PORT}..."
-php artisan serve --host="[::]" --port="${PORT}" --no-reload
+export PHP_CLI_SERVER_WORKERS=4
+php -S 0.0.0.0:${PORT} -t public/
