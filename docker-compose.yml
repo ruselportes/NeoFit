@@ -13,7 +13,9 @@ services:
 
   # React Frontend
   dashboard:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     container_name: neofit-dashboard
     ports:
       - "5173:5173"
