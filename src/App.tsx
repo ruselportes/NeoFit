@@ -110,8 +110,26 @@ function App() {
           {['dashboard', 'members', 'attendance', 'rates', 'settings']
             .filter(tab => role === 'admin' || tab !== 'settings')
             .map(tab => (
-              <li key={tab} className={`nav-item ${activeTab === tab ? 'active' : ''}`} onClick={() => { setActiveTab(tab); setIsSidebarOpen(false); }}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              <li 
+                key={tab} 
+                className={`nav-item ${activeTab === tab ? 'active' : ''}`} 
+                onClick={() => { setActiveTab(tab); setIsSidebarOpen(false); }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+              >
+                <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+                {tab === 'settings' && (
+                  <span style={{ 
+                    fontSize: '0.7rem', 
+                    background: 'rgba(255, 87, 34, 0.15)', 
+                    color: 'var(--accent)', 
+                    padding: '2px 8px', 
+                    borderRadius: '12px', 
+                    fontWeight: 600,
+                    border: '1px solid rgba(255, 87, 34, 0.3)'
+                  }}>
+                    Soon
+                  </span>
+                )}
               </li>
             ))}
         </ul>

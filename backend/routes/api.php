@@ -6,11 +6,11 @@ use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AuthController;
 
-// Public routes
-Route::post('/login', [AuthController::class, 'login']);
+// Public routes (Rate limited to 5 attempts per minute per IP to prevent brute force/DDoS)
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
-// Protected routes
-Route::middleware('auth:sanctum')->group(function () {
+// Protected routes (Protected by auth and general API rate limiter of 30 requests per minute)
+Route::middleware(['auth:sanctum', 'throttle:30,1'])->group(function () {
     // Dashboard stats
     Route::get('/dashboard', [MemberController::class, 'dashboard']);
 
