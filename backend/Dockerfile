@@ -6,6 +6,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
+# Clean the default FrankenPHP files to allow composer create-project to run in an empty directory
+RUN rm -rf * .* 2>/dev/null || true
+
 # Create fresh Laravel project
 RUN composer create-project laravel/laravel . --prefer-dist --no-interaction
 
