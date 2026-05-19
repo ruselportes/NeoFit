@@ -18,4 +18,7 @@ echo "MySQL is ready! Running migrations..."
 php artisan migrate --force
 php artisan db:seed --force
 
+# Export SERVER_NAME to tell FrankenPHP to bind to the correct port
+export SERVER_NAME=":${PORT:-8000}"
+
 exec "$@"
