@@ -2,8 +2,8 @@ import { useState } from 'react';
 import * as api from '../api';
 
 export default function LoginView({ onLogin }: { onLogin: (token: string, role: string) => void }) {
-  const [email, setEmail] = useState('admin@neofit.com');
-  const [password, setPassword] = useState('password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 

@@ -245,6 +245,8 @@ button {
   border: 1px solid var(--glass-border);
   border-radius: var(--card-radius);
   overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -281,6 +283,7 @@ tr:hover td {
   font-weight: 600;
 }
 .badge.active { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge.pending { background: rgba(0, 229, 255, 0.15); color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.3); }
 .badge.expired { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 .badge.expiring-soon { background: rgba(255, 152, 0, 0.15); color: #ff9800; border: 1px solid rgba(255, 152, 0, 0.3); }
 .badge.annual-member { background: rgba(138, 43, 226, 0.15); color: #a855f7; border: 1px solid rgba(138, 43, 226, 0.35); }
@@ -470,4 +473,176 @@ select.input-field optgroup {
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Header and Drawer Styling */
+.mobile-header {
+  display: none;
+}
+
+.sidebar-close {
+  display: none;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 99;
+}
+
+.sidebar-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Media Queries for Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 1.25rem;
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 50;
+    position: sticky;
+    top: 0;
+  }
+
+  .menu-toggle {
+    background: transparent;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: var(--transition);
+  }
+
+  .menu-toggle:hover {
+    background: var(--bg-secondary);
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    height: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: 20px 0 30px rgba(0, 0, 0, 0.5);
+    background-color: var(--bg-modal);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .sidebar .brand {
+    margin-bottom: 0;
+  }
+
+  .sidebar-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: var(--transition);
+  }
+
+  .sidebar-close:hover {
+    color: var(--text-main);
+    background: var(--bg-secondary);
+  }
+
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .search-bar .input-field {
+    max-width: 100% !important;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 700px;
+  }
+
+  /* Modal: scrollable on mobile so keyboard doesn't hide fields */
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 1rem 0.75rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-content {
+    max-height: none;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem 1.25rem;
+    max-width: 100%;
+    width: 100%;
+  }
 }

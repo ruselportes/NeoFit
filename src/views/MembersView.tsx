@@ -43,13 +43,21 @@ export default function MembersView({ role, showNotification }: { role: string |
     return d.toISOString().split('T')[0];
   };
 
-  const getRemainingDays = (expiryDate: string): number => {
+  const getRemainingDays = (expiryDate: string, startDate?: string): number => {
     if (!expiryDate) return 0;
     const today = new Date();
-    const expiry = new Date(expiryDate);
     today.setHours(0, 0, 0, 0);
+    
+    const start = startDate ? new Date(startDate) : today;
+    start.setHours(0, 0, 0, 0);
+    
+    const expiry = new Date(expiryDate);
     expiry.setHours(0, 0, 0, 0);
-    const diffTime = expiry.getTime() - today.getTime();
+    
+    // If the plan has not started yet, calculate duration from start date
+    const referenceDate = start > today ? start : today;
+    
+    const diffTime = expiry.getTime() - referenceDate.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
   // Parse plan name into { category, period, type } matching the Rates tab
@@ -107,6 +115,12 @@ export default function MembersView({ role, showNotification }: { role: string |
     try {
       setError('');
       if (!form.name || !form.contact || !form.expiry_date) { setError('Please fill in all fields.'); return; }
+      
+      if (form.contact.length !== 11 || !form.contact.startsWith('09')) {
+        setError('Contact number must be exactly 11 digits (starting with 09).');
+        return;
+      }
+
       if (editingMember) {
         await api.updateMember(editingMember.id, form);
       } else {
@@ -146,6 +160,7 @@ export default function MembersView({ role, showNotification }: { role: string |
         <select className="input-field" value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{maxWidth:'160px'}}>
           <option>All Status</option>
           <option>Active</option>
+          <option>Pending</option>
           <option>Expiring Soon</option>
           <option>Expired</option>
           <option>Annual Membership</option>
@@ -181,16 +196,40 @@ export default function MembersView({ role, showNotification }: { role: string |
                 </td>
                 <td>
                   {!m.plan.includes('Non-Member') ? (() => {
-                    const days = getRemainingDays(m.membership_expiry || '');
-                    if (days <= 0) return <span style={{ color: 'var(--danger)', fontSize: '0.85rem', fontWeight: 600 }}>Expired</span>;
-                    return <span style={{ color: days <= 30 ? '#ff9800' : 'var(--success)', fontSize: '0.85rem', fontWeight: 600 }}>{days} day{days !== 1 ? 's' : ''} left</span>;
+                    const isFuture = m.joined_date && new Date(m.joined_date) > new Date();
+                    const days = getRemainingDays(m.membership_expiry || '', m.joined_date);
+                    if (days < 0) return <span style={{ color: 'var(--danger)', fontSize: '0.85rem', fontWeight: 600 }}>Expired</span>;
+                    return (
+                      <div>
+                        <span style={{ color: isFuture ? 'var(--text-muted)' : (days <= 30 ? '#ff9800' : 'var(--success)'), fontSize: '0.85rem', fontWeight: 600 }}>
+                          {days === 0 ? 'Expires Today' : `${days} day${days !== 1 ? 's' : ''} left`}
+                        </span>
+                        {isFuture && (
+                          <div style={{ fontSize: '0.75rem', color: '#00e5ff', marginTop: '2px', fontWeight: 500 }}>
+                            Starts in {getRemainingDays(m.joined_date || '')} days
+                          </div>
+                        )}
+                      </div>
+                    );
                   })() : <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>—</span>}
                 </td>
                 <td>
                   {(() => {
-                    const days = getRemainingDays(m.expiry_date || '');
-                    if (days <= 0) return <span style={{ color: 'var(--danger)', fontSize: '0.85rem', fontWeight: 600 }}>Expired</span>;
-                    return <span style={{ color: days <= 7 ? '#ff9800' : 'var(--success)', fontSize: '0.85rem', fontWeight: 600 }}>{days} day{days !== 1 ? 's' : ''} left</span>;
+                    const isFuture = m.joined_date && new Date(m.joined_date) > new Date();
+                    const days = getRemainingDays(m.expiry_date || '', m.joined_date);
+                    if (days < 0) return <span style={{ color: 'var(--danger)', fontSize: '0.85rem', fontWeight: 600 }}>Expired</span>;
+                    return (
+                      <div>
+                        <span style={{ color: isFuture ? 'var(--text-muted)' : (days <= 7 ? '#ff9800' : 'var(--success)'), fontSize: '0.85rem', fontWeight: 600 }}>
+                          {days === 0 ? 'Expires Today' : `${days} day${days !== 1 ? 's' : ''} left`}
+                        </span>
+                        {isFuture && (
+                          <div style={{ fontSize: '0.75rem', color: '#00e5ff', marginTop: '2px', fontWeight: 500 }}>
+                            Starts in {getRemainingDays(m.joined_date || '')} days
+                          </div>
+                        )}
+                      </div>
+                    );
                   })()}
                 </td>
                 <td>

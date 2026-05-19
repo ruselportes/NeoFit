@@ -44,7 +44,7 @@ export default function SettingsView() {
 
       {error && <div className="toast error" style={{marginBottom: '1rem'}}>{error}</div>}
 
-      <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}>
+      <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))' }}>
         <div className="stat-card" style={{ padding: '2rem' }}>
           <h3 className="section-title">General Information</h3>
           <div className="form-group"><label>Gym Name</label>

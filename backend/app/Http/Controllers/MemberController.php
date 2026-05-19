@@ -13,10 +13,10 @@ class MemberController extends Controller
     {
         $members = Member::all();
         $activeCount = $members->filter(fn($m) => $m->status === 'Active')->count();
-        $todayCheckIns = CheckIn::whereDate('checked_in_at', Carbon::today())->count();
+        $todayCheckIns = CheckIn::whereDate('checked_in_at', Carbon::today('Asia/Manila'))->count();
 
         $recentCheckIns = CheckIn::with('member')
-            ->whereDate('checked_in_at', Carbon::today())
+            ->whereDate('checked_in_at', Carbon::today('Asia/Manila'))
             ->orderBy('checked_in_at', 'desc')
             ->limit(10)
             ->get()
@@ -26,7 +26,7 @@ class MemberController extends Controller
                 'memberId' => $c->member->member_id,
                 'plan' => $c->member->plan,
                 'status' => $c->member->status,
-                'time' => Carbon::parse($c->checked_in_at)->format('h:i A'),
+                'time' => Carbon::parse($c->checked_in_at)->setTimezone('Asia/Manila')->format('h:i A'),
             ]);
 
         return response()->json([
@@ -66,13 +66,26 @@ class MemberController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'contact' => 'required|string|max:20',
+            'contact' => ['required', 'string', 'regex:/^09\d{9}$/'],
             'plan' => 'required|string|max:255',
             'joined_date' => 'required|date',
             'expiry_date' => 'required|date|after_or_equal:joined_date',
             'address' => 'nullable|string|max:500',
             'membership_expiry' => 'nullable|date',
+        ], [
+            'contact.regex' => 'The contact number must be exactly 11 digits starting with 09.',
         ]);
+
+        // Check for duplicate member (same name and contact)
+        $duplicateExists = Member::where('name', $validated['name'])
+            ->where('contact', $validated['contact'])
+            ->exists();
+
+        if ($duplicateExists) {
+            return response()->json([
+                'message' => 'A member with this name and contact number already exists.'
+            ], 422);
+        }
 
         $member = Member::create($validated);
         return response()->json($member, 201);
@@ -87,13 +100,30 @@ class MemberController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'contact' => 'sometimes|string|max:20',
+            'contact' => ['sometimes', 'string', 'regex:/^09\d{9}$/'],
             'plan' => 'sometimes|string|max:255',
             'joined_date' => 'sometimes|date',
             'expiry_date' => 'sometimes|date',
             'address' => 'nullable|string|max:500',
             'membership_expiry' => 'nullable|date',
+        ], [
+            'contact.regex' => 'The contact number must be exactly 11 digits starting with 09.',
         ]);
+
+        // Check for duplicate member (same name and contact, excluding current member)
+        $targetName = $validated['name'] ?? $member->name;
+        $targetContact = $validated['contact'] ?? $member->contact;
+
+        $duplicateExists = Member::where('name', $targetName)
+            ->where('contact', $targetContact)
+            ->where('id', '!=', $member->id)
+            ->exists();
+
+        if ($duplicateExists) {
+            return response()->json([
+                'message' => 'Another member with this name and contact number already exists.'
+            ], 422);
+        }
 
         $member->update($validated);
         return response()->json($member);

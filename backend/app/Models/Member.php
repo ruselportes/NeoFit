@@ -24,10 +24,20 @@ class Member extends Model
 
     public function getStatusAttribute(): string
     {
-        $today = Carbon::today();
-        $expiry = Carbon::parse($this->expiry_date);
-        if ($expiry->lt($today)) return 'Expired';
-        if ($expiry->diffInDays($today) <= 7) return 'Expiring Soon';
+        // Use pure date strings (Y-m-d) to avoid UTC vs Asia/Manila timezone mismatch
+        $todayStr = Carbon::now('Asia/Manila')->format('Y-m-d');
+        $joinedStr = Carbon::parse($this->joined_date)->format('Y-m-d');
+        $expiryStr = Carbon::parse($this->expiry_date)->format('Y-m-d');
+
+        if ($joinedStr > $todayStr) return 'Pending';
+        if ($expiryStr < $todayStr) return 'Expired';
+
+        // Check if expiring within 7 days (plan expiry date - today)
+        $today = Carbon::parse($todayStr);
+        $expiry = Carbon::parse($expiryStr);
+        $daysLeft = (int) $today->diffInDays($expiry, false); // positive = future, negative = past
+        if ($daysLeft >= 0 && $daysLeft <= 7) return 'Expiring Soon';
+
         return 'Active';
     }
 
