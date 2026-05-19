@@ -18,6 +18,4 @@ echo "MySQL is ready! Running migrations..."
 php artisan migrate --force
 php artisan db:seed --force
 
-echo "Starting Laravel server on port ${PORT}..."
-export PHP_CLI_SERVER_WORKERS=4
-php -S 0.0.0.0:${PORT} -t public/
+exec "$@"

@@ -1,12 +1,10 @@
-FROM php:8.2-cli
+FROM dunglas/frankenphp:1-php8.2
 
-RUN apt-get update && apt-get install -y git unzip libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql zip pcntl \
-    && apt-get clean
+RUN install-php-extensions pdo_mysql zip pcntl
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/laravel
+WORKDIR /app
 
 # Create fresh Laravel project
 RUN composer create-project laravel/laravel . --prefer-dist --no-interaction
@@ -32,5 +30,7 @@ RUN php artisan key:generate
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-EXPOSE 8000
+ENV FRANKENPHP_DOCUMENT_ROOT=/app/public
+
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
