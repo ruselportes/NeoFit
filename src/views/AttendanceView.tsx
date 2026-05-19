@@ -49,11 +49,25 @@ export default function AttendanceView({ showNotification }: { showNotification:
         </div>
       </header>
 
-      <div className="scanner-box">
-        <span className="icon">👆</span>
-        <h3 style={{ fontSize: '1.5rem' }}>Waiting for Fingerprint...</h3>
-        <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontSize: '1.1rem' }}>
-          Scanner integration pending hardware setup.
+      <div className="scanner-box" style={{ position: 'relative', overflow: 'hidden' }}>
+        <span style={{ 
+          position: 'absolute', 
+          top: '12px', 
+          right: '12px', 
+          fontSize: '0.75rem', 
+          background: 'rgba(255, 87, 34, 0.15)', 
+          color: 'var(--accent)', 
+          padding: '4px 10px', 
+          borderRadius: '12px', 
+          fontWeight: 600,
+          border: '1px solid rgba(255, 87, 34, 0.3)'
+        }}>
+          Coming Soon
+        </span>
+        <span className="icon" style={{ opacity: 0.6 }}>👆</span>
+        <h3 style={{ fontSize: '1.5rem', opacity: 0.8 }}>Fingerprint Scanner</h3>
+        <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontSize: '1.1rem', opacity: 0.7 }}>
+          Biometric integration is scheduled for future deployment.
         </p>
       </div>
 

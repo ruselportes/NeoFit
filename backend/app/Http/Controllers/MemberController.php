@@ -20,14 +20,19 @@ class MemberController extends Controller
             ->orderBy('checked_in_at', 'desc')
             ->limit(10)
             ->get()
-            ->map(fn($c) => [
-                'id' => $c->id,
-                'memberName' => $c->member->name,
-                'memberId' => $c->member->member_id,
-                'plan' => $c->member->plan,
-                'status' => $c->member->status,
-                'time' => Carbon::parse($c->checked_in_at)->setTimezone('Asia/Manila')->format('h:i A'),
-            ]);
+            ->map(function ($c) {
+                /** @var CheckIn $c */
+                $member = $c->member;
+                /** @var Member $member */
+                return [
+                    'id' => $c->id,
+                    'memberName' => $member->name,
+                    'memberId' => $member->member_id,
+                    'plan' => $member->plan,
+                    'status' => $member->status,
+                    'time' => Carbon::parse($c->checked_in_at)->setTimezone('Asia/Manila')->format('h:i A'),
+                ];
+            });
 
         return response()->json([
             'activeMembers' => $activeCount,

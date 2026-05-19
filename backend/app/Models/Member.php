@@ -19,7 +19,7 @@ class Member extends Model
 
     public function getMemberIdAttribute(): string
     {
-        return 'M-' . str_pad($this->id, 3, '0', STR_PAD_LEFT);
+        return 'M-' . str_pad((string) $this->id, 3, '0', STR_PAD_LEFT);
     }
 
     public function getStatusAttribute(): string
