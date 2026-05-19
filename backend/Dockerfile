@@ -33,6 +33,8 @@ RUN php artisan key:generate
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
+COPY Caddyfile /etc/caddy/Caddyfile
+
 ENV FRANKENPHP_DOCUMENT_ROOT=/app/public
 
 ENTRYPOINT ["/entrypoint.sh"]
