@@ -13,7 +13,6 @@ RUN composer create-project laravel/laravel . --prefer-dist --no-interaction
 
 # Install Sanctum for API auth
 RUN composer require laravel/sanctum --no-interaction
-RUN php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider" || true
 
 # Copy custom application files (merges with existing Laravel scaffolding)
 COPY bootstrap/app.php bootstrap/app.php
