@@ -2,7 +2,7 @@
     frankenphp
 }
 
-http://:{$PORT:8000} {
+http://:8000 {
     root * public/
     encode zstd gzip
     php_server
