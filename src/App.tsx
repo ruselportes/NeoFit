@@ -51,7 +51,7 @@ function App() {
       case 'attendance': return <AttendanceView showNotification={showNotification} />;
       case 'rates': return <RatesView />;
       case 'settings': 
-        return role === 'admin' ? <SettingsView showNotification={showNotification} /> : <DashboardView onNavigate={setActiveTab} role={role} />;
+        return role === 'admin' ? <SettingsView /> : <DashboardView onNavigate={setActiveTab} role={role} />;
       default: return <DashboardView onNavigate={setActiveTab} role={role} />;
     }
   };

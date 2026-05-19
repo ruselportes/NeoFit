@@ -5,7 +5,6 @@ import type { CheckIn } from '../types';
 export default function AttendanceView({ showNotification }: { showNotification: (message: string, type?: 'success' | 'error') => void }) {
   const [memberId, setMemberId] = useState('M-');
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
-  const [feedback, setFeedback] = useState<{ type: string; msg: string } | null>(null);
 
   const handleMemberIdChange = (value: string) => {
     // Always keep the M- prefix
@@ -22,7 +21,6 @@ export default function AttendanceView({ showNotification }: { showNotification:
       .then(setCheckIns)
       .catch(err => {
         console.error(err);
-        setFeedback({ type: 'error', msg: 'Failed to load check-ins.' });
       });
   };
 
