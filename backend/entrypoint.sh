@@ -2,12 +2,12 @@
 set -e
 
 # Default env vars if not set
-DB_HOST="${DB_HOST:-db}"
-DB_PORT="${DB_PORT:-3306}"
-DB_DATABASE="${DB_DATABASE:-neofit}"
-DB_USERNAME="${DB_USERNAME:-neofit}"
-DB_PASSWORD="${DB_PASSWORD:-neofit}"
-PORT="${PORT:-8000}"
+export DB_HOST="${DB_HOST:-db}"
+export DB_PORT="${DB_PORT:-3306}"
+export DB_DATABASE="${DB_DATABASE:-neofit}"
+export DB_USERNAME="${DB_USERNAME:-neofit}"
+export DB_PASSWORD="${DB_PASSWORD:-neofit}"
+export PORT="${PORT:-8000}"
 
 echo "Waiting for MySQL at ${DB_HOST}:${DB_PORT}..."
 while ! php -r "try { new PDO('mysql:host=' . getenv('DB_HOST') . ';port=' . getenv('DB_PORT') . ';dbname=' . getenv('DB_DATABASE'), getenv('DB_USERNAME'), getenv('DB_PASSWORD')); echo 'ok'; } catch(Exception \$e) { exit(1); }" 2>/dev/null; do

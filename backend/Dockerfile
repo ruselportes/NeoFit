@@ -18,6 +18,7 @@ RUN composer require laravel/sanctum --no-interaction
 # Copy custom application files (merges with existing Laravel scaffolding)
 COPY bootstrap/app.php bootstrap/app.php
 COPY config/cors.php config/cors.php
+COPY config/app.php config/app.php
 COPY routes/api.php routes/api.php
 COPY app/Models/ app/Models/
 COPY app/Http/Controllers/MemberController.php app/Http/Controllers/MemberController.php
